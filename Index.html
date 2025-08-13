@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sedthasard App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Phetsarath+OT:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Phetsarath OT', 'Noto Sans Lao', sans-serif;
+        }
+        
+        @keyframes slideText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .slide-animation {
+            animation: slideText 8s linear infinite;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .background-overlay {
+            background: linear-gradient(135deg, #1a4d3a 0%, #0f2419 100%);
+            border: 3px solid #dc2626;
+        }
+        .custom-bg {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .glass-effect {
+            background: rgba(26, 77, 58, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary { background: #16a34a; }
+        .btn-secondary { background: #dc2626; }
+        .btn-accent { background: #7c3aed; }
+        .btn-pink { background: #ec4899; }
+        .btn-orange { background: #ea580c; }
+        .text-primary { color: #16a34a; }
+        .text-secondary { color: #dc2626; }
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .search-result {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen background-overlay custom-bg">
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex flex-col justify-between p-6">
+        <!-- Top Controls -->
+        <div class="absolute top-4 right-4 flex gap-2">
+            <!-- Language Selector -->
+            <div class="relative">
+                <button onclick="toggleLanguageMenu()" class="glass-effect text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-all flex items-center">
+                    <span id="currentFlag" class="flag-icon">🇱🇦</span>
+                    <span id="currentLang" data-key="language">ພາສາ</span>
+                </button>
+                <div id="languageMenu" class="hidden absolute top-12 right-0 glass-effect rounded-lg p-2 min-w-40 z-50">
+                    <button onclick="changeLanguage('lo')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                        🇱🇦 <span data-key="lao">ລາວ</span>
+                    </button>
+                    <button onclick="changeLanguage('en')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                        🇺🇸 <span data-key="english">English</span>
+                    </button>
+                    <button onclick="changeLanguage('vi')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                        🇻🇳 <span data-key="vietnamese">Tiếng Việt</span>
+                    </button>
+                    <button onclick="changeLanguage('zh')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                        🇨🇳 <span data-key="chinese">中文</span>
+                    </button>
+                    <button onclick="changeLanguage('th')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                        🇹🇭 <span data-key="thai">ไทย</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Background Image Selector -->
+            <input type="file" id="bgImageInput" accept="image/*" class="hidden">
+            <button onclick="document.getElementById('bgImageInput').click()" class="glass-effect text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-all">
+                📷 <span data-key="changeBackground">ປ່ຽນພື້ນຫລັງ</span>
+            </button>
+        </div>
+
+        <!-- Logo Section -->
+        <div class="text-center mt-16">
+            <div class="relative inline-block">
+                <div class="glass-effect rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4">
+                    <span id="appLogo" class="text-4xl">🎓</span>
+                </div>
+            </div>
+            <h1 class="text-white text-2xl font-bold" data-key="appName">Sedthasard App</h1>
+        </div>
+
+        <!-- Login Form -->
+        <div class="flex-1 flex items-center justify-center">
+            <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+                <h2 class="text-white text-xl font-semibold mb-6 text-center" data-key="login">ເຂົ້າສູ່ລະບົບ</h2>
+                <div class="relative mb-4">
+                    <input type="password" id="loginPassword" data-key-placeholder="enterPassword" placeholder="ໃສ່ລະຫັດຜ່ານ" 
+                           class="w-full px-4 py-3 rounded-lg bg-white/10 border border-red-500/50 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-green-500"
+                           onkeypress="handleEnterKey(event)">
+                    <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-white/70 hover:text-white">
+                        <span id="eyeIcon">👁️</span>
+                    </button>
+                </div>
+                <div id="errorMessage" class="text-red-300 text-sm mb-4 hidden" data-key="incorrectPassword">
+                    ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ. ບໍ່ສາມາດເຂົ້າສູ່ແອັບໄດ້.
+                </div>
+                <button onclick="login()" class="w-full btn-primary hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors" data-key="loginButton">
+                    ເຂົ້າສູ່ລະບົບ
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Message -->
+        <div class="text-center">
+            <p class="text-white/80 text-sm" data-key="footerMessage">
+                ແອັບນີ້ແມ່ນສໍາລັບການບັນທຶກຂໍ້ມູນແລະລາຍຮັບ-ລາຍຈ່າຍຂອງນັກສຶກສາເສດຖະກິດແລະການຄຸ້ມຄອງເສດຖະກິດເທົ່ານັ້ນ
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="mainDashboard" class="hidden min-h-screen p-6">
+        <!-- Header -->
+        <div class="glass-effect rounded-2xl p-6 mb-6 border border-red-500/30">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <span id="dashboardLogo" class="text-4xl mr-3">🎓</span>
+                    <h1 class="text-white text-3xl font-bold" data-key="appName">Sedthasard App</h1>
+                </div>
+                <div class="flex gap-2">
+                    <!-- Logo Management -->
+                    <div class="relative">
+                        <input type="file" id="logoInput" accept="image/*" class="hidden">
+                        <button onclick="document.getElementById('logoInput').click()" class="glass-effect text-white px-3 py-2 rounded-lg hover:bg-white/30 transition-all text-sm">
+                            🖼️ <span data-key="changeLogo">ປ່ຽນໂລໂກ້</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button onclick="toggleLanguageMenu()" class="glass-effect text-white px-3 py-2 rounded-lg hover:bg-white/30 transition-all flex items-center text-sm">
+                            <span id="dashboardFlag" class="flag-icon">🇱🇦</span>
+                            <span id="dashboardLang" data-key="language">ພາສາ</span>
+                        </button>
+                        <div id="dashboardLanguageMenu" class="hidden absolute top-12 right-0 glass-effect rounded-lg p-2 min-w-40 z-50">
+                            <button onclick="changeLanguage('lo')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                                🇱🇦 <span data-key="lao">ລາວ</span>
+                            </button>
+                            <button onclick="changeLanguage('en')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                                🇺🇸 <span data-key="english">English</span>
+                            </button>
+                            <button onclick="changeLanguage('vi')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                                🇻🇳 <span data-key="vietnamese">Tiếng Việt</span>
+                            </button>
+                            <button onclick="changeLanguage('zh')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                                🇨🇳 <span data-key="chinese">中文</span>
+                            </button>
+                            <button onclick="changeLanguage('th')" class="w-full text-left text-white px-3 py-2 hover:bg-white/20 rounded flex items-center">
+                                🇹🇭 <span data-key="thai">ไทย</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-hidden glass-effect rounded-lg p-3 border border-green-500/30">
+                <div class="slide-animation text-white font-semibold whitespace-nowrap" data-key="welcomeMessage">
+                    ຍິນດີຕ້ອນຮັບສູ່ແອັບເສດຖະກິດແລະການຄຸ້ມຄອງເສດຖະກິດ
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="glass-effect rounded-2xl p-6 mb-6 border border-blue-500/30">
+            <h3 class="text-white text-lg font-semibold mb-4">🔍 <span data-key="searchData">ຄົ້ນຫາຂໍ້ມູນ</span></h3>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="searchInput" placeholder="ຄົ້ນຫາຊື່ນັກສຶກສາ, ລາຍຮັບ, ລາຍຈ່າຍ..." 
+                       class="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       oninput="performSearch()">
+                <button onclick="clearSearch()" class="btn-secondary px-4 py-2 rounded-lg text-white hover:bg-red-700">
+                    <span data-key="clear">ລ້າງ</span>
+                </button>
+            </div>
+            <div id="searchResults" class="hidden">
+                <h4 class="text-white font-medium mb-3" data-key="searchResults">ຜົນການຄົ້ນຫາ:</h4>
+                <div id="searchResultsContent" class="space-y-2 max-h-60 overflow-y-auto">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <button onclick="showStudentData()" class="btn-primary hover:bg-green-700 text-white p-6 rounded-2xl transition-colors border border-red-500/30 glass-effect">
+                <div class="text-4xl mb-2">👥</div>
+                <h3 class="text-xl font-semibold" data-key="studentData">ຂໍ້ມູນນັກສຶກສາ</h3>
+                <p class="text-green-100"><span id="dashboardStudentCount">0</span> <span data-key="students">ນັກສຶກສາ</span></p>
+            </button>
+            <button onclick="showIncome()" class="btn-accent hover:bg-purple-700 text-white p-6 rounded-2xl transition-colors border border-red-500/30 glass-effect">
+                <div class="text-4xl mb-2">💰</div>
+                <h3 class="text-xl font-semibold" data-key="income">ລາຍຮັບ</h3>
+                <p class="text-purple-100" data-key="trackEarnings">ຕິດຕາມລາຍຮັບ</p>
+            </button>
+            <button onclick="showExpense()" class="btn-secondary hover:bg-red-700 text-white p-6 rounded-2xl transition-colors border border-red-500/30 glass-effect">
+                <div class="text-4xl mb-2">💸</div>
+                <h3 class="text-xl font-semibold" data-key="expense">ລາຍຈ່າຍ</h3>
+                <p class="text-red-100" data-key="trackSpending">ຕິດຕາມລາຍຈ່າຍ</p>
+            </button>
+            <button onclick="showReport()" class="btn-pink hover:bg-pink-700 text-white p-6 rounded-2xl transition-colors border border-red-500/30 glass-effect">
+                <div class="text-4xl mb-2">📊</div>
+                <h3 class="text-xl font-semibold" data-key="report">ລາຍງານ</h3>
+                <p class="text-pink-100" data-key="viewAnalytics">ເບິ່ງການວິເຄາະ</p>
+            </button>
+        </div>
+    </div>
+
+    <!-- Student Data Page -->
+    <div id="studentDataPage" class="hidden min-h-screen p-6">
+        <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold">ຂໍ້ມູນນັກສຶກສາ (<span id="studentCount">0</span> ນັກສຶກສາ)</h2>
+                <div class="space-x-2">
+                    <button onclick="showAddStudent()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                        ➕ ເພີ່ມນັກສຶກສາ
+                    </button>
+                    <button onclick="showMainDashboard()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                        ← ກັບຄືນ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-white text-sm">
+                    <thead>
+                        <tr class="bg-white/10">
+                            <th class="p-3 text-left">ລໍາດັບ</th>
+                            <th class="p-3 text-left">ຊື່</th>
+                            <th class="p-3 text-left">ລະຫັດນັກສຶກສາ</th>
+                            <th class="p-3 text-left">ເບີໂທ</th>
+                            <th class="p-3 text-left">ສະຖານະ</th>
+                            <th class="p-3 text-left">ການດໍາເນີນງານ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Students will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Income Page -->
+    <div id="incomePage" class="hidden min-h-screen p-6">
+        <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold" data-key="incomeManagement">ການຄຸ້ມຄອງລາຍຮັບ</h2>
+                <button onclick="showMainDashboard()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                    ← <span data-key="back">ກັບຄືນ</span>
+                </button>
+            </div>
+
+            <!-- Add Income Form -->
+            <div class="bg-white/10 rounded-xl p-6 mb-6">
+                <h3 class="text-white text-lg font-semibold mb-4" data-key="addIncome">ເພີ່ມລາຍຮັບ</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-white block mb-2" data-key="incomeType">ປະເພດລາຍຮັບ</label>
+                        <select id="incomeType" class="w-full px-3 py-2 rounded-lg bg-gray-800 border border-white/20 text-white">
+                            <option value="monthly_fund" class="bg-gray-800 text-white">ໄດ້ຮັບຈາກການເກັບເງິນຄັງປະຈໍາເດືອນ</option>
+                            <option value="activities" class="bg-gray-800 text-white">ໄດ້ຮັບຈາກກິດຈະກໍາຕ່າງໆ</option>
+                            <option value="other" class="bg-gray-800 text-white">ອື່ນໆ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="paymentMethod">ວິທີການຈ່າຍ</label>
+                        <select id="paymentMethod" class="w-full px-3 py-2 rounded-lg bg-gray-800 border border-white/20 text-white">
+                            <option value="cash" class="bg-gray-800 text-white">ເງິນສົດ</option>
+                            <option value="transfer" class="bg-gray-800 text-white">ໂອນເງິນ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="amount">ຈໍານວນ (ກີບ)</label>
+                        <input type="number" id="incomeAmount" placeholder="ໃສ່ຈໍານວນເງິນ" 
+                               class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70">
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="date">ວັນທີ</label>
+                        <input type="date" id="incomeDate" 
+                               class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="addIncome()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                        <span data-key="save">ບັນທຶກ</span>
+                    </button>
+                    <button onclick="cancelIncomeForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                        <span data-key="cancel">ຍົກເລີກ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Income Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-green-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="totalIncome">ລາຍຮັບທັງໝົດ</h4>
+                    <p class="text-2xl text-green-300 font-bold" id="totalIncome">0 ກີບ</p>
+                </div>
+                <div class="bg-blue-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="thisMonth">ເດືອນນີ້</h4>
+                    <p class="text-2xl text-blue-300 font-bold" id="monthlyIncome">0 ກີບ</p>
+                </div>
+                <div class="bg-yellow-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="pendingPayments">ການຈ່າຍທີ່ຄ້າງ</h4>
+                    <p class="text-2xl text-yellow-300 font-bold" id="pendingPayments">0</p>
+                </div>
+            </div>
+
+            <!-- Student Payment Status -->
+            <div class="bg-white/10 rounded-xl p-6">
+                <h3 class="text-white text-lg font-semibold mb-4" data-key="studentPaymentStatus">ສະຖານະການຈ່າຍເງິນຂອງນັກສຶກສາ</h3>
+                <div id="paymentStatusGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <!-- Payment status will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Page -->
+    <div id="expensePage" class="hidden min-h-screen p-6">
+        <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold" data-key="expenseManagement">ການຄຸ້ມຄອງລາຍຈ່າຍ</h2>
+                <button onclick="showMainDashboard()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                    ← <span data-key="back">ກັບຄືນ</span>
+                </button>
+            </div>
+
+            <!-- Add Expense Form -->
+            <div class="bg-white/10 rounded-xl p-6 mb-6">
+                <h3 class="text-white text-lg font-semibold mb-4" data-key="addExpense">ເພີ່ມລາຍຈ່າຍ</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-white block mb-2" data-key="expenseType">ປະເພດລາຍຈ່າຍ</label>
+                        <select id="expenseType" class="w-full px-3 py-2 rounded-lg bg-gray-800 border border-white/20 text-white">
+                            <option value="documents" class="bg-gray-800 text-white">ຈ່າຍຄ່າເອກະສານ</option>
+                            <option value="water" class="bg-gray-800 text-white">ຈ່າຍຄ່ານໍ້າດື່ມ</option>
+                            <option value="envelopes" class="bg-gray-800 text-white">ຈ່າຍຄ່າຊອງຂາວ</option>
+                            <option value="written_exam" class="bg-gray-800 text-white">ຈ່າຍຄ່າເສັງຂຽນ</option>
+                            <option value="oral_exam" class="bg-gray-800 text-white">ຈ່າຍຄ່າເສັງປາກເປົ່າ</option>
+                            <option value="fuel_lecturers" class="bg-gray-800 text-white">ຈ່າຍຄ່ານໍ້າມັນລົດອາຈານຮັບເຊີນ</option>
+                            <option value="other" class="bg-gray-800 text-white">ອື່ນໆ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="amount">ຈໍານວນ (ກີບ)</label>
+                        <input type="number" id="expenseAmount" placeholder="ໃສ່ຈໍານວນເງິນ" 
+                               class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70">
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="date">ວັນທີ</label>
+                        <input type="date" id="expenseDate" 
+                               class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white">
+                    </div>
+                    <div>
+                        <label class="text-white block mb-2" data-key="description">ລາຍລະອຽດ</label>
+                        <input type="text" id="expenseDescription" placeholder="ລາຍລະອຽດເພີ່ມເຕີມ" 
+                               class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="addExpense()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg">
+                        <span data-key="save">ບັນທຶກ</span>
+                    </button>
+                    <button onclick="cancelExpenseForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                        <span data-key="cancel">ຍົກເລີກ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Expense Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-red-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="totalExpenses">ລາຍຈ່າຍທັງໝົດ</h4>
+                    <p class="text-2xl text-red-300 font-bold" id="totalExpenses">0 ກີບ</p>
+                </div>
+                <div class="bg-orange-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="thisMonth">ເດືອນນີ້</h4>
+                    <p class="text-2xl text-orange-300 font-bold" id="monthlyExpenses">0 ກີບ</p>
+                </div>
+                <div class="bg-purple-600/20 rounded-xl p-4">
+                    <h4 class="text-white font-semibold" data-key="netBalance">ຍອດເງິນສຸດທິ</h4>
+                    <p class="text-2xl text-purple-300 font-bold" id="netBalance">0 ກີບ</p>
+                </div>
+            </div>
+
+            <!-- Recent Expenses -->
+            <div class="bg-white/10 rounded-xl p-6">
+                <h3 class="text-white text-lg font-semibold mb-4" data-key="recentExpenses">ລາຍຈ່າຍຫຼ້າສຸດ</h3>
+                <div id="expensesList" class="space-y-3">
+                    <!-- Expenses will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Summary Page -->
+    <div id="reportPage" class="hidden min-h-screen p-6">
+        <div class="glass-effect rounded-2xl p-6 border border-red-500/30">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold" data-key="financialReport">ລາຍງານການເງິນ</h2>
+                <div class="flex gap-2">
+                    <button onclick="showBarChartReport()" class="btn-accent px-4 py-2 rounded-lg text-white">
+                        📊 <span data-key="barChart">ແທ່ງ</span>
+                    </button>
+                    <button onclick="showPieChartReport()" class="btn-pink px-4 py-2 rounded-lg text-white">
+                        🥧 <span data-key="pieChart">ວົງມົນ</span>
+                    </button>
+                    <button onclick="showMainDashboard()" class="btn-secondary hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        ← <span data-key="back">ກັບຄືນ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Period Selector -->
+            <div class="mb-6 flex flex-wrap gap-4">
+                <button onclick="setReportPeriod('daily')" id="dailyBtn" class="btn-primary px-4 py-2 rounded-lg text-white" data-key="daily">ລາຍວັນ</button>
+                <button onclick="setReportPeriod('weekly')" id="weeklyBtn" class="glass-effect px-4 py-2 rounded-lg text-white border border-white/20" data-key="weekly">ລາຍອາທິດ</button>
+                <button onclick="setReportPeriod('monthly')" id="monthlyBtn" class="glass-effect px-4 py-2 rounded-lg text-white border border-white/20" data-key="monthly">ລາຍເດືອນ</button>
+                <button onclick="setReportPeriod('yearly')" id="yearlyBtn" class="glass-effect px-4 py-2 rounded-lg text-white border border-white/20" data-key="yearly">ລາຍປີ</button>
+                <input type="date" id="calendarView" class="glass-effect px-3 py-2 rounded-lg text-white border border-white/20" onchange="viewByDate()">
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-effect rounded-xl p-4 text-center border border-green-500/30">
+                    <h4 class="text-white font-semibold" data-key="totalIncome">ລາຍຮັບທັງໝົດ</h4>
+                    <p class="text-2xl text-green-300 font-bold" id="reportTotalIncome">0 ກີບ</p>
+                </div>
+                <div class="glass-effect rounded-xl p-4 text-center border border-red-500/30">
+                    <h4 class="text-white font-semibold" data-key="totalExpenses">ລາຍຈ່າຍທັງໝົດ</h4>
+                    <p class="text-2xl text-red-300 font-bold" id="reportTotalExpenses">0 ກີບ</p>
+                </div>
+                <div class="glass-effect rounded-xl p-4 text-center border border-blue-500/30">
+                    <h4 class="text-white font-semibold" data-key="netBalance">ຍອດເງິນສຸດທິ</h4>
+                    <p class="text-2xl text-blue-300 font-bold" id="reportNetBalance">0 ກີບ</p>
+                </div>
+                <div class="glass-effect rounded-xl p-4 text-center border border-yellow-500/30">
+                    <h4 class="text-white font-semibold" data-key="activeStudents">ນັກສຶກສາທີ່ເຄື່ອນໄຫວ</h4>
+                    <p class="text-2xl text-yellow-300 font-bold" id="reportActiveStudents">0</p>
+                </div>
+            </div>
+
+            <!-- Detailed Table -->
+            <div class="glass-effect rounded-xl p-6 border border-green-500/30">
+                <h3 class="text-white text-lg font-semibold mb-4" data-key="detailedTransactions">ລາຍການທຸລະກໍາລະອຽດ</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-white text-sm">
+                        <thead>
+                            <tr class="border-b border-white/20">
+                                <th class="p-3 text-left" data-key="date">ວັນທີ</th>
+                                <th class="p-3 text-left" data-key="time">ເວລາ</th>
+                                <th class="p-3 text-left" data-key="type">ປະເພດ</th>
+                                <th class="p-3 text-left" data-key="description">ລາຍລະອຽດ</th>
+                                <th class="p-3 text-right" data-key="amount">ຈໍານວນ (ກີບ)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailedTransactionsTable">
+                            <!-- Detailed transactions will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bar Chart Report Page -->
+    <div id="barChartPage" class="hidden min-h-screen p-6">
+        <div class="glass-effect rounded-2xl p-6 border border-purple-500/30">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold" data-key="barChartReport">ລາຍງານແທ່ງ</h2>
+                <div class="flex gap-2">
+                    <button onclick="showReport()" class="btn-orange px-4 py-2 rounded-lg text-white">
+                        📋 <span data-key="summary">ສະຫຼຸບ</span>
+                    </button>
+                    <button onclick="showPieChartReport()" class="btn-pink px-4 py-2 rounded-lg text-white">
+                        🥧 <span data-key="pieChart">ວົງມົນ</span>
+                    </button>
+                    <button onclick="showMainDashboard()" class="btn-secondary hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        ← <span data-key="back">ກັບຄືນ</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-4 border border-purple-500/30">
+                <h3 class="text-white text-lg font-semibold mb-3" data-key="incomeVsExpenses">ລາຍຮັບ ປຽບທຽບ ລາຍຈ່າຍ</h3>
+                <canvas id="barChart" class="w-full h-40"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie Chart Report Page -->
+    <div id="pieChartPage" class="hidden min-h-screen p-6">
+        <div class="glass-effect rounded-2xl p-6 border border-pink-500/30">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold" data-key="pieChartReport">ລາຍງານວົງມົນ</h2>
+                <div class="flex gap-2">
+                    <button onclick="showReport()" class="btn-orange px-4 py-2 rounded-lg text-white">
+                        📋 <span data-key="summary">ສະຫຼຸບ</span>
+                    </button>
+                    <button onclick="showBarChartReport()" class="btn-accent px-4 py-2 rounded-lg text-white">
+                        📊 <span data-key="barChart">ແທ່ງ</span>
+                    </button>
+                    <button onclick="showMainDashboard()" class="btn-secondary hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        ← <span data-key="back">ກັບຄືນ</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-4 border border-pink-500/30">
+                <h3 class="text-white text-lg font-semibold mb-3" data-key="expenseBreakdown">ການແບ່ງປັນລາຍຈ່າຍ</h3>
+                <canvas id="pieChart" class="w-full h-40"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            lo: {
+                language: 'ພາສາ',
+                lao: 'ລາວ',
+                english: 'English',
+                vietnamese: 'Tiếng Việt',
+                chinese: '中文',
+                thai: 'ไทย',
+                changeBackground: 'ປ່ຽນພື້ນຫລັງ',
+                changeLogo: 'ປ່ຽນໂລໂກ້',
+                appName: 'Sedthasard App',
+                login: 'ເຂົ້າສູ່ລະບົບ',
+                enterPassword: 'ໃສ່ລະຫັດຜ່ານ',
+                incorrectPassword: 'ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ. ບໍ່ສາມາດເຂົ້າສູ່ແອັບໄດ້.',
+                loginButton: 'ເຂົ້າສູ່ລະບົບ',
+                footerMessage: 'ແອັບນີ້ແມ່ນສໍາລັບການບັນທຶກຂໍ້ມູນແລະລາຍຮັບ-ລາຍຈ່າຍຂອງນັກສຶກສາເສດຖະກິດແລະການຄຸ້ມຄອງເສດຖະກິດເທົ່ານັ້ນ',
+                welcomeMessage: 'ຍິນດີຕ້ອນຮັບສູ່ແອັບເສດຖະກິດແລະການຄຸ້ມຄອງເສດຖະກິດ',
+                searchData: 'ຄົ້ນຫາຂໍ້ມູນ',
+                searchResults: 'ຜົນການຄົ້ນຫາ',
+                clear: 'ລ້າງ',
+                studentData: 'ຂໍ້ມູນນັກສຶກສາ',
+                students: 'ນັກສຶກສາ',
+                income: 'ລາຍຮັບ',
+                trackEarnings: 'ຕິດຕາມລາຍຮັບ',
+                expense: 'ລາຍຈ່າຍ',
+                trackSpending: 'ຕິດຕາມລາຍຈ່າຍ',
+                report: 'ລາຍງານ',
+                viewAnalytics: 'ເບິ່ງການວິເຄາະ',
+                back: 'ກັບຄືນ',
+                save: 'ບັນທຶກ',
+                cancel: 'ຍົກເລີກ',
+                incomeManagement: 'ການຄຸ້ມຄອງລາຍຮັບ',
+                expenseManagement: 'ການຄຸ້ມຄອງລາຍຈ່າຍ',
+                addIncome: 'ເພີ່ມລາຍຮັບ',
+                addExpense: 'ເພີ່ມລາຍຈ່າຍ',
+                incomeType: 'ປະເພດລາຍຮັບ',
+                expenseType: 'ປະເພດລາຍຈ່າຍ',
+                paymentMethod: 'ວິທີການຈ່າຍ',
+                amount: 'ຈໍານວນ (ກີບ)',
+                date: 'ວັນທີ',
+                description: 'ລາຍລະອຽດ',
+                totalIncome: 'ລາຍຮັບທັງໝົດ',
+                totalExpenses: 'ລາຍຈ່າຍທັງໝົດ',
+                thisMonth: 'ເດືອນນີ້',
+                netBalance: 'ຍອດເງິນສຸດທິ',
+                pendingPayments: 'ການຈ່າຍທີ່ຄ້າງ',
+                activeStudents: 'ນັກສຶກສາທີ່ເຄື່ອນໄຫວ',
+                studentPaymentStatus: 'ສະຖານະການຈ່າຍເງິນຂອງນັກສຶກສາ',
+                recentExpenses: 'ລາຍຈ່າຍຫຼ້າສຸດ',
+                financialReport: 'ລາຍງານການເງິນ',
+                barChartReport: 'ລາຍງານແທ່ງ',
+                pieChartReport: 'ລາຍງານວົງມົນ',
+                barChart: 'ແທ່ງ',
+                pieChart: 'ວົງມົນ',
+                summary: 'ສະຫຼຸບ',
+                daily: 'ລາຍວັນ',
+                weekly: 'ລາຍອາທິດ',
+                monthly: 'ລາຍເດືອນ',
+                yearly: 'ລາຍປີ',
+                incomeVsExpenses: 'ລາຍຮັບ ປຽບທຽບ ລາຍຈ່າຍ',
+                expenseBreakdown: 'ການແບ່ງປັນລາຍຈ່າຍ',
+                detailedTransactions: 'ລາຍການທຸລະກໍາລະອຽດ',
+                time: 'ເວລາ',
+                type: 'ປະເພດ'
+            },
+            en: {
+                language: 'Language',
+                lao: 'Lao',
+                english: 'English',
+                vietnamese: 'Vietnamese',
+                chinese: 'Chinese',
+                thai: 'Thai',
+                changeBackground: 'Change Background',
+                changeLogo: 'Change Logo',
+                appName: 'Sedthasard App',
+                login: 'Login',
+                enterPassword: 'Enter password',
+                incorrectPassword: 'Incorrect password. Cannot enter the app.',
+                loginButton: 'Login',
+                footerMessage: 'This app is for recording data and income-expenditure of Economics and Economic Management students only',
+                welcomeMessage: 'Welcome to the Economics and Economic Management App',
+                searchData: 'Search Data',
+                searchResults: 'Search Results',
+                clear: 'Clear',
+                studentData: 'Student Data',
+                students: 'students',
+                income: 'Income',
+                trackEarnings: 'Track earnings',
+                expense: 'Expense',
+                trackSpending: 'Track spending',
+                report: 'Report',
+                viewAnalytics: 'View analytics',
+                back: 'Back',
+                save: 'Save',
+                cancel: 'Cancel',
+                incomeManagement: 'Income Management',
+                expenseManagement: 'Expense Management',
+                addIncome: 'Add Income',
+                addExpense: 'Add Expense',
+                incomeType: 'Income Type',
+                expenseType: 'Expense Type',
+                paymentMethod: 'Payment Method',
+                amount: 'Amount (LAK)',
+                date: 'Date',
+                description: 'Description',
+                totalIncome: 'Total Income',
+                totalExpenses: 'Total Expenses',
+                thisMonth: 'This Month',
+                netBalance: 'Net Balance',
+                pendingPayments: 'Pending Payments',
+                activeStudents: 'Active Students',
+                studentPaymentStatus: 'Student Payment Status',
+                recentExpenses: 'Recent Expenses',
+                financialReport: 'Financial Report',
+                barChartReport: 'Bar Chart Report',
+                pieChartReport: 'Pie Chart Report',
+                barChart: 'Bar Chart',
+                pieChart: 'Pie Chart',
+                summary: 'Summary',
+                daily: 'Daily',
+                weekly: 'Weekly',
+                monthly: 'Monthly',
+                yearly: 'Yearly',
+                incomeVsExpenses: 'Income vs Expenses',
+                expenseBreakdown: 'Expense Breakdown',
+                detailedTransactions: 'Detailed Transactions',
+                time: 'Time',
+                type: 'Type'
+            }
+        };
+
+        // Current language and settings
+        let currentLanguage = 'lo';
+        let currentReportPeriod = 'daily';
+
+        // Data storage
+        const students = [];
+        let incomeData = [];
+        let expenseData = [];
+        let studentPaymentStatus = {};
+        let barChart, pieChart;
+
+        // Language functionality
+        function toggleLanguageMenu() {
+            const menu = document.getElementById('languageMenu');
+            const dashboardMenu = document.getElementById('dashboardLanguageMenu');
+            
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+            if (dashboardMenu) {
+                dashboardMenu.classList.toggle('hidden');
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const flags = {
+                'lo': '🇱🇦',
+                'en': '🇺🇸',
+                'vi': '🇻🇳',
+                'zh': '🇨🇳',
+                'th': '🇹🇭'
+            };
+            
+            // Update flag and language display
+            const currentFlag = document.getElementById('currentFlag');
+            const currentLangEl = document.getElementById('currentLang');
+            if (currentFlag) currentFlag.textContent = flags[lang];
+            if (currentLangEl) currentLangEl.textContent = translations[lang].language;
+            
+            const dashboardFlag = document.getElementById('dashboardFlag');
+            const dashboardLang = document.getElementById('dashboardLang');
+            if (dashboardFlag) dashboardFlag.textContent = flags[lang];
+            if (dashboardLang) dashboardLang.textContent = translations[lang].language;
+            
+            // Update all text elements
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-key-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-key-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+            
+            // Hide language menus
+            const languageMenu = document.getElementById('languageMenu');
+            const dashboardLanguageMenu = document.getElementById('dashboardLanguageMenu');
+            if (languageMenu) {
+                languageMenu.classList.add('hidden');
+            }
+            if (dashboardLanguageMenu) {
+                dashboardLanguageMenu.classList.add('hidden');
+            }
+
+            // Update currency display
+            updateAllDisplays();
+        }
+
+        // Logo functionality
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoHTML = `<img src="${e.target.result}" class="w-12 h-12 rounded-full object-cover">`;
+                    
+                    // Update all logo instances
+                    const appLogo = document.getElementById('appLogo');
+                    const dashboardLogo = document.getElementById('dashboardLogo');
+                    
+                    if (appLogo) appLogo.innerHTML = logoHTML;
+                    if (dashboardLogo) dashboardLogo.innerHTML = logoHTML;
+                    
+                    // Save logo to localStorage
+                    localStorage.setItem('sedthasardLogo', e.target.result);
+                    
+                    alert(currentLanguage === 'lo' ? 'ບັນທຶກໂລໂກ້ແລ້ວ!' : 'Logo saved!');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load saved logo on page load
+        function loadSavedLogo() {
+            const savedLogo = localStorage.getItem('sedthasardLogo');
+            if (savedLogo) {
+                const logoHTML = `<img src="${savedLogo}" class="w-12 h-12 rounded-full object-cover">`;
+                const appLogo = document.getElementById('appLogo');
+                const dashboardLogo = document.getElementById('dashboardLogo');
+                
+                if (appLogo) appLogo.innerHTML = logoHTML;
+                if (dashboardLogo) dashboardLogo.innerHTML = logoHTML;
+            }
+        }
+
+        // Search functionality
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+            const resultsContent = document.getElementById('searchResultsContent');
+            
+            if (!query) {
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+            
+            resultsDiv.classList.remove('hidden');
+            resultsContent.innerHTML = '';
+            
+            let hasResults = false;
+            
+            // Search students
+            students.forEach((student, index) => {
+                const name = (student.name || student).toLowerCase();
+                if (name.includes(query)) {
+                    hasResults = true;
+                    const div = document.createElement('div');
+                    div.className = 'search-result p-3 rounded-lg';
+                    div.innerHTML = `
+                        <div class="text-white font-medium">👥 ${student.name || student}</div>
+                        <div class="text-white/70 text-sm">ນັກສຶກສາ - ${student.studentId || 'STU' + String(index + 1).padStart(3, '0')}</div>
+                    `;
+                    resultsContent.appendChild(div);
+                }
+            });
+            
+            // Search income
+            incomeData.forEach(income => {
+                if (income.type.toLowerCase().includes(query) || income.amount.toString().includes(query)) {
+                    hasResults = true;
+                    const div = document.createElement('div');
+                    div.className = 'search-result p-3 rounded-lg';
+                    div.innerHTML = `
+                        <div class="text-white font-medium">💰 ລາຍຮັບ: ${income.amount.toLocaleString()} ກີບ</div>
+                        <div class="text-white/70 text-sm">${income.type} - ${income.date}</div>
+                    `;
+                    resultsContent.appendChild(div);
+                }
+            });
+            
+            // Search expenses
+            expenseData.forEach(expense => {
+                if (expense.type.toLowerCase().includes(query) || expense.amount.toString().includes(query) || 
+                    (expense.description && expense.description.toLowerCase().includes(query))) {
+                    hasResults = true;
+                    const div = document.createElement('div');
+                    div.className = 'search-result p-3 rounded-lg';
+                    div.innerHTML = `
+                        <div class="text-white font-medium">💸 ລາຍຈ່າຍ: ${expense.amount.toLocaleString()} ກີບ</div>
+                        <div class="text-white/70 text-sm">${expense.type} - ${expense.date}</div>
+                    `;
+                    resultsContent.appendChild(div);
+                }
+            });
+            
+            if (!hasResults) {
+                resultsContent.innerHTML = '<div class="text-white/70 text-center p-4">ບໍ່ພົບຂໍ້ມູນທີ່ຄົ້ນຫາ</div>';
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').classList.add('hidden');
+        }
+
+        // Login functionality
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('loginPassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        }
+
+        function login() {
+            const password = document.getElementById('loginPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (password === '02054539859') {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                loadSavedLogo();
+                updateDashboardCounts();
+            } else {
+                errorMessage.classList.remove('hidden');
+            }
+        }
+
+        // Background image functionality
+        document.getElementById('bgImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.body.style.backgroundImage = `url(${e.target.result})`;
+                    document.body.classList.add('custom-bg');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Navigation functions
+        function showMainDashboard() {
+            hideAllPages();
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            updateDashboardCounts();
+        }
+
+        function showStudentData() {
+            hideAllPages();
+            document.getElementById('studentDataPage').classList.remove('hidden');
+            populateStudentTable();
+        }
+
+        function showIncome() {
+            hideAllPages();
+            document.getElementById('incomePage').classList.remove('hidden');
+            updateIncomeDisplay();
+            updatePaymentStatus();
+            document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function showExpense() {
+            hideAllPages();
+            document.getElementById('expensePage').classList.remove('hidden');
+            updateExpenseDisplay();
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function showReport() {
+            hideAllPages();
+            document.getElementById('reportPage').classList.remove('hidden');
+            updateReportDisplay();
+        }
+
+        function showBarChartReport() {
+            hideAllPages();
+            document.getElementById('barChartPage').classList.remove('hidden');
+            setTimeout(() => createBarChart(), 100);
+        }
+
+        function showPieChartReport() {
+            hideAllPages();
+            document.getElementById('pieChartPage').classList.remove('hidden');
+            setTimeout(() => createPieChart(), 100);
+        }
+
+        function hideAllPages() {
+            const pages = ['loginPage', 'mainDashboard', 'studentDataPage', 'incomePage', 'expensePage', 'reportPage', 'barChartPage', 'pieChartPage'];
+            pages.forEach(page => {
+                const element = document.getElementById(page);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+        }
+
+        // Update dashboard counts
+        function updateDashboardCounts() {
+            const dashboardStudentCount = document.getElementById('dashboardStudentCount');
+            if (dashboardStudentCount) {
+                dashboardStudentCount.textContent = students.length;
+            }
+        }
+
+        // Student data functions
+        function populateStudentTable() {
+            const tbody = document.getElementById('studentTableBody');
+            const studentCountEl = document.getElementById('studentCount');
+            
+            if (tbody) tbody.innerHTML = '';
+            if (studentCountEl) studentCountEl.textContent = students.length;
+            
+            if (students.length === 0) {
+                if (tbody) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="6" class="p-8 text-center text-white/70">
+                            ຍັງບໍ່ມີຂໍ້ມູນນັກສຶກສາ<br>
+                            <span class="text-sm">ກົດປຸ່ມ "➕ ເພີ່ມນັກສຶກສາ" ເພື່ອເພີ່ມຂໍ້ມູນນັກສຶກສາ</span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+                return;
+            }
+            
+            students.forEach((student, index) => {
+                if (tbody) {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-white/10 hover:bg-white/5';
+                    row.innerHTML = `
+                        <td class="p-3">${index + 1}</td>
+                        <td class="p-3">${student.name || student}</td>
+                        <td class="p-3">${student.studentId || 'STU' + String(index + 1).padStart(3, '0')}</td>
+                        <td class="p-3">${student.phone || 'ບໍ່ມີຂໍ້ມູນ'}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded-full text-xs bg-green-600 text-green-100">
+                                ເຄື່ອນໄຫວ
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <button onclick="editStudent(${index})" class="text-blue-300 hover:text-blue-100 mr-2">✏️</button>
+                            <button onclick="viewStudent(${index})" class="text-green-300 hover:text-green-100 mr-2">👁️</button>
+                            <button onclick="deleteStudent(${index})" class="text-red-300 hover:text-red-100">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function editStudent(index) {
+            const student = students[index];
+            const name = prompt('ແກ້ໄຂຊື່ນັກສຶກສາ:', student.name || student);
+            if (name && name.trim()) {
+                if (typeof students[index] === 'string') {
+                    students[index] = { name: name.trim(), studentId: 'STU' + String(index + 1).padStart(3, '0') };
+                } else {
+                    students[index].name = name.trim();
+                }
+                populateStudentTable();
+                updatePaymentStatus();
+                updateDashboardCounts();
+            }
+        }
+
+        function viewStudent(index) {
+            const student = students[index];
+            const info = typeof student === 'string' ? 
+                `ຊື່: ${student}\nລະຫັດນັກສຶກສາ: STU${String(index + 1).padStart(3, '0')}` :
+                `ຊື່: ${student.name}\nລະຫັດນັກສຶກສາ: ${student.studentId}\nເບີໂທ: ${student.phone || 'ບໍ່ມີຂໍ້ມູນ'}`;
+            alert(info);
+        }
+
+        function deleteStudent(index) {
+            if (confirm('ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບນັກສຶກສາຄົນນີ້?')) {
+                students.splice(index, 1);
+                delete studentPaymentStatus[index];
+                
+                // Reindex payment status
+                const newStatus = {};
+                Object.keys(studentPaymentStatus).forEach((key, i) => {
+                    if (parseInt(key) > index) {
+                        newStatus[parseInt(key) - 1] = studentPaymentStatus[key];
+                    } else if (parseInt(key) < index) {
+                        newStatus[key] = studentPaymentStatus[key];
+                    }
+                });
+                studentPaymentStatus = newStatus;
+                
+                populateStudentTable();
+                updatePaymentStatus();
+                updateDashboardCounts();
+            }
+        }
+
+        function showAddStudent() {
+            const name = prompt('ໃສ່ຊື່ນັກສຶກສາ:');
+            if (name && name.trim()) {
+                const studentId = prompt('ໃສ່ລະຫັດນັກສຶກສາ:', 'STU' + String(students.length + 1).padStart(3, '0'));
+                const phone = prompt('ໃສ່ເບີໂທ (ບໍ່ບັງຄັບ):');
+                
+                const newStudent = {
+                    name: name.trim(),
+                    studentId: studentId || 'STU' + String(students.length + 1).padStart(3, '0'),
+                    phone: phone || ''
+                };
+                
+                students.push(newStudent);
+                
+                // Add to payment status
+                studentPaymentStatus[students.length - 1] = {
+                    name: newStudent.name,
+                    paid: false,
+                    amount: 0,
+                    lastPayment: null
+                };
+                
+                populateStudentTable();
+                updatePaymentStatus();
+                updateDashboardCounts();
+            }
+        }
+
+        // Form cancel functions
+        function cancelIncomeForm() {
+            document.getElementById('incomeAmount').value = '';
+            document.getElementById('incomeType').selectedIndex = 0;
+            document.getElementById('paymentMethod').selectedIndex = 0;
+            document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function cancelExpenseForm() {
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseDescription').value = '';
+            document.getElementById('expenseType').selectedIndex = 0;
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Income functions
+        function addIncome() {
+            const type = document.getElementById('incomeType').value;
+            const method = document.getElementById('paymentMethod').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const date = document.getElementById('incomeDate').value;
+            
+            if (!amount || !date) {
+                alert(currentLanguage === 'lo' ? 'ກະລຸນາໃສ່ຂໍ້ມູນໃຫ້ຄົບຖ້ວນ.' : 'Please fill in all required fields.');
+                return;
+            }
+            
+            const income = {
+                id: Date.now(),
+                type,
+                method,
+                amount,
+                date,
+                timestamp: new Date()
+            };
+            
+            incomeData.push(income);
+            updateAllDisplays();
+            cancelIncomeForm();
+            
+            alert(currentLanguage === 'lo' ? 'ບັນທຶກລາຍຮັບສໍາເລັດ!' : 'Income added successfully!');
+        }
+
+        function updateIncomeDisplay() {
+            const total = incomeData.reduce((sum, income) => sum + income.amount, 0);
+            const thisMonth = incomeData.filter(income => {
+                const incomeDate = new Date(income.date);
+                const now = new Date();
+                return incomeDate.getMonth() === now.getMonth() && incomeDate.getFullYear() === now.getFullYear();
+            }).reduce((sum, income) => sum + income.amount, 0);
+            
+            const currency = currentLanguage === 'lo' ? 'ກີບ' : 'LAK';
+            const totalIncomeEl = document.getElementById('totalIncome');
+            const monthlyIncomeEl = document.getElementById('monthlyIncome');
+            const pendingPaymentsEl = document.getElementById('pendingPayments');
+            
+            if (totalIncomeEl) totalIncomeEl.textContent = `${total.toLocaleString()} ${currency}`;
+            if (monthlyIncomeEl) monthlyIncomeEl.textContent = `${thisMonth.toLocaleString()} ${currency}`;
+            
+            const pendingCount = Object.values(studentPaymentStatus).filter(status => !status.paid).length;
+            if (pendingPaymentsEl) pendingPaymentsEl.textContent = pendingCount;
+        }
+
+        function updatePaymentStatus() {
+            const grid = document.getElementById('paymentStatusGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            if (students.length === 0) {
+                grid.innerHTML = '<p class="text-white/70 text-center col-span-full">ຍັງບໍ່ມີຂໍ້ມູນນັກສຶກສາ - ກະລຸນາເພີ່ມນັກສຶກສາກ່ອນ</p>';
+                return;
+            }
+            
+            Object.entries(studentPaymentStatus).forEach(([index, status]) => {
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-lg cursor-pointer transition-colors ${status.paid ? 'bg-green-600/20 hover:bg-green-600/30' : 'bg-red-600/20 hover:bg-red-600/30'}`;
+                div.onclick = () => togglePaymentStatus(index);
+                div.innerHTML = `
+                    <div class="text-white text-sm font-medium">${status.name}</div>
+                    <div class="text-xs ${status.paid ? 'text-green-300' : 'text-red-300'}">
+                        ${status.paid ? '✅ ຈ່າຍແລ້ວ' : '❌ ຍັງບໍ່ຈ່າຍ'}
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function togglePaymentStatus(index) {
+            if (studentPaymentStatus[index]) {
+                studentPaymentStatus[index].paid = !studentPaymentStatus[index].paid;
+                studentPaymentStatus[index].lastPayment = studentPaymentStatus[index].paid ? new Date() : null;
+                updatePaymentStatus();
+                updateIncomeDisplay();
+            }
+        }
+
+        // Expense functions
+        function addExpense() {
+            const type = document.getElementById('expenseType').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const date = document.getElementById('expenseDate').value;
+            const description = document.getElementById('expenseDescription').value;
+            
+            if (!amount || !date) {
+                alert(currentLanguage === 'lo' ? 'ກະລຸນາໃສ່ຂໍ້ມູນໃຫ້ຄົບຖ້ວນ.' : 'Please fill in all required fields.');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now(),
+                type,
+                amount,
+                date,
+                description,
+                timestamp: new Date()
+            };
+            
+            expenseData.push(expense);
+            updateAllDisplays();
+            cancelExpenseForm();
+            
+            alert(currentLanguage === 'lo' ? 'ບັນທຶກລາຍຈ່າຍສໍາເລັດ!' : 'Expense added successfully!');
+        }
+
+        function updateExpenseDisplay() {
+            const total = expenseData.reduce((sum, expense) => sum + expense.amount, 0);
+            const thisMonth = expenseData.filter(expense => {
+                const expenseDate = new Date(expense.date);
+                const now = new Date();
+                return expenseDate.getMonth() === now.getMonth() && expenseDate.getFullYear() === now.getFullYear();
+            }).reduce((sum, expense) => sum + expense.amount, 0);
+            
+            const totalIncome = incomeData.reduce((sum, income) => sum + income.amount, 0);
+            const netBalance = totalIncome - total;
+            
+            const currency = currentLanguage === 'lo' ? 'ກີບ' : 'LAK';
+            const totalExpensesEl = document.getElementById('totalExpenses');
+            const monthlyExpensesEl = document.getElementById('monthlyExpenses');
+            const netBalanceEl = document.getElementById('netBalance');
+            
+            if (totalExpensesEl) totalExpensesEl.textContent = `${total.toLocaleString()} ${currency}`;
+            if (monthlyExpensesEl) monthlyExpensesEl.textContent = `${thisMonth.toLocaleString()} ${currency}`;
+            if (netBalanceEl) netBalanceEl.textContent = `${netBalance.toLocaleString()} ${currency}`;
+            
+            // Update expenses list
+            const expensesList = document.getElementById('expensesList');
+            if (expensesList) {
+                expensesList.innerHTML = '';
+                
+                if (expenseData.length === 0) {
+                    expensesList.innerHTML = '<div class="text-white/70 text-center p-4">ຍັງບໍ່ມີລາຍຈ່າຍ</div>';
+                    return;
+                }
+                
+                expenseData.slice(-5).reverse().forEach(expense => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white/5 rounded-lg p-3';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-white font-medium">${expense.type.replace('_', ' ').toUpperCase()}</div>
+                                <div class="text-white/70 text-sm">${expense.date}</div>
+                            </div>
+                            <div class="text-red-300 font-bold">${expense.amount.toLocaleString()} ${currency}</div>
+                        </div>
+                    `;
+                    expensesList.appendChild(div);
+                });
+            }
+        }
+
+        // Report functions
+        function setReportPeriod(period) {
+            currentReportPeriod = period;
+            
+            // Update button styles
+            ['daily', 'weekly', 'monthly', 'yearly'].forEach(p => {
+                const btn = document.getElementById(p + 'Btn');
+                if (btn) {
+                    if (p === period) {
+                        btn.className = 'btn-primary px-4 py-2 rounded-lg text-white';
+                    } else {
+                        btn.className = 'glass-effect px-4 py-2 rounded-lg text-white border border-white/20';
+                    }
+                }
+            });
+            
+            updateReportDisplay();
+        }
+
+        function viewByDate() {
+            const selectedDate = document.getElementById('calendarView').value;
+            if (selectedDate) {
+                updateReportDisplay(selectedDate);
+            }
+        }
+
+        function createBarChart() {
+            const barCtx = document.getElementById('barChart');
+            if (!barCtx) return;
+            
+            const ctx = barCtx.getContext('2d');
+            if (barChart) barChart.destroy();
+            
+            const totalIncome = incomeData.reduce((sum, income) => sum + income.amount, 0);
+            const totalExpenses = expenseData.reduce((sum, expense) => sum + expense.amount, 0);
+            
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [translations[currentLanguage].income, translations[currentLanguage].expense],
+                    datasets: [{
+                        data: [totalIncome, totalExpenses],
+                        backgroundColor: ['#16a34a', '#dc2626'],
+                        borderColor: ['#15803d', '#b91c1c'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: 'white' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPieChart() {
+            const pieCtx = document.getElementById('pieChart');
+            if (!pieCtx) return;
+            
+            const ctx = pieCtx.getContext('2d');
+            if (pieChart) pieChart.destroy();
+            
+            const expenseTypes = {};
+            expenseData.forEach(expense => {
+                expenseTypes[expense.type] = (expenseTypes[expense.type] || 0) + expense.amount;
+            });
+            
+            if (Object.keys(expenseTypes).length === 0) {
+                // Show empty state
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('ຍັງບໍ່ມີຂໍ້ມູນລາຍຈ່າຍ', pieCtx.width / 2, pieCtx.height / 2);
+                return;
+            }
+            
+            pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(expenseTypes),
+                    datasets: [{
+                        data: Object.values(expenseTypes),
+                        backgroundColor: ['#dc2626', '#16a34a', '#7c3aed', '#ec4899', '#f59e0b', '#06b6d4'],
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateReportDisplay(filterDate = null) {
+            let filteredIncome = incomeData;
+            let filteredExpenses = expenseData;
+            
+            if (filterDate) {
+                filteredIncome = incomeData.filter(item => item.date === filterDate);
+                filteredExpenses = expenseData.filter(item => item.date === filterDate);
+            } else if (currentReportPeriod !== 'yearly') {
+                const now = new Date();
+                const filterFn = (item) => {
+                    const itemDate = new Date(item.date);
+                    switch (currentReportPeriod) {
+                        case 'daily':
+                            return itemDate.toDateString() === now.toDateString();
+                        case 'weekly':
+                            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                            return itemDate >= weekAgo;
+                        case 'monthly':
+                            return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
+                        default:
+                            return true;
+                    }
+                };
+                filteredIncome = incomeData.filter(filterFn);
+                filteredExpenses = expenseData.filter(filterFn);
+            }
+            
+            const totalIncome = filteredIncome.reduce((sum, income) => sum + income.amount, 0);
+            const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const netBalance = totalIncome - totalExpenses;
+            
+            const currency = currentLanguage === 'lo' ? 'ກີບ' : 'LAK';
+            
+            // Update report summary
+            const reportTotalIncomeEl = document.getElementById('reportTotalIncome');
+            const reportTotalExpensesEl = document.getElementById('reportTotalExpenses');
+            const reportNetBalanceEl = document.getElementById('reportNetBalance');
+            const reportActiveStudentsEl = document.getElementById('reportActiveStudents');
+            
+            if (reportTotalIncomeEl) reportTotalIncomeEl.textContent = `${totalIncome.toLocaleString()} ${currency}`;
+            if (reportTotalExpensesEl) reportTotalExpensesEl.textContent = `${totalExpenses.toLocaleString()} ${currency}`;
+            if (reportNetBalanceEl) reportNetBalanceEl.textContent = `${netBalance.toLocaleString()} ${currency}`;
+            if (reportActiveStudentsEl) reportActiveStudentsEl.textContent = students.length;
+            
+            // Update detailed transactions table
+            const tableBody = document.getElementById('detailedTransactionsTable');
+            if (tableBody) {
+                tableBody.innerHTML = '';
+                
+                const allTransactions = [
+                    ...filteredIncome.map(item => ({...item, type: 'income', typeDisplay: translations[currentLanguage].income})),
+                    ...filteredExpenses.map(item => ({...item, type: 'expense', typeDisplay: translations[currentLanguage].expense}))
+                ].sort((a, b) => new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date));
+                
+                if (allTransactions.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="5" class="p-8 text-center text-white/70">ຍັງບໍ່ມີຂໍ້ມູນທຸລະກໍາ</td>';
+                    tableBody.appendChild(row);
+                    return;
+                }
+                
+                allTransactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-white/10 hover:bg-white/5';
+                    const time = transaction.timestamp ? new Date(transaction.timestamp).toLocaleTimeString() : '--:--';
+                    row.innerHTML = `
+                        <td class="p-3">${transaction.date}</td>
+                        <td class="p-3">${time}</td>
+                        <td class="p-3">${transaction.typeDisplay}</td>
+                        <td class="p-3">${transaction.description || transaction.type}</td>
+                        <td class="p-3 text-right ${transaction.type === 'income' ? 'text-green-300' : 'text-red-300'}">
+                            ${transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString()} ${currency}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Update all displays
+        function updateAllDisplays() {
+            updateIncomeDisplay();
+            updateExpenseDisplay();
+            updatePaymentStatus();
+            updateReportDisplay();
+            updateDashboardCounts();
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            const incomeDateEl = document.getElementById('incomeDate');
+            const expenseDateEl = document.getElementById('expenseDate');
+            const calendarViewEl = document.getElementById('calendarView');
+            
+            if (incomeDateEl) incomeDateEl.value = today;
+            if (expenseDateEl) expenseDateEl.value = today;
+            if (calendarViewEl) calendarViewEl.value = today;
+            
+            // Initialize language
+            changeLanguage('lo');
+            
+            // Close language menu when clicking outside
+            document.addEventListener('click', function(e) {
+                const languageMenu = document.getElementById('languageMenu');
+                const dashboardLanguageMenu = document.getElementById('dashboardLanguageMenu');
+                const languageButton = e.target.closest('[onclick="toggleLanguageMenu()"]');
+                
+                if (languageMenu && !languageButton && !languageMenu.contains(e.target)) {
+                    languageMenu.classList.add('hidden');
+                }
+                if (dashboardLanguageMenu && !languageButton && !dashboardLanguageMenu.contains(e.target)) {
+                    dashboardLanguageMenu.classList.add('hidden');
+                }
+            });
+            
+            // Load saved logo
+            loadSavedLogo();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e9390dc0eb5066',t:'MTc1NTA5ODcwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
